@@ -14,3 +14,4 @@ datasources:
     driverClassName: org.postgresql.Driver
     username: ${POSTGRES_USER:user}
     password: ${POSTGRES_PASSWORD:secret}
+    dialect: POSTGRES
