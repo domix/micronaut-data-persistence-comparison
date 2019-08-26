@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.circulosiete.talks.micronaut.data.springboot.jpa;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
