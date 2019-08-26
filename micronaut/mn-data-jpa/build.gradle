@@ -71,7 +71,7 @@ tasks.withType(JavaCompile){
 
 
 task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
-    dependsOn assemble
+    dependsOn bootJar
     destFile = project.file('build/libs/Dockerfile')
 
     from "adoptopenjdk:11.0.4_11-jre-openj9-0.15.1"
