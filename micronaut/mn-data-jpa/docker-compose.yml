@@ -1,7 +1,7 @@
 version: '2.2' 
 services:
   app:
-    image: domix/mn-data-jdbc:0.1-jre-11-0.4
+    image: domix/mn-data-jpa:0.1-jre-11-0.4
     cpus: 0.5
     mem_reservation: 512m
     ports:

@@ -3,6 +3,7 @@ plugins {
     id "application"
     id "net.ltgt.apt-eclipse" version "0.21"
     id "net.ltgt.apt-idea" version "0.21"
+    id 'com.bmuschko.docker-remote-api' version '5.0.0'
 }
 
 version "0.1"
@@ -66,4 +67,28 @@ run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxrem
 tasks.withType(JavaCompile){
     options.encoding = "UTF-8"
     options.compilerArgs.add('-parameters')
+}
+
+
+task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
+    dependsOn assemble
+    destFile = project.file('build/libs/Dockerfile')
+
+    from "adoptopenjdk:11.0.4_11-jre-openj9-0.15.1"
+    label(['maintainer': "Domingo Suarez Torres <domingo.suarez@gmail.com>"])
+    copyFile "mn-data-jpa-${ project.version }-all.jar", '/opt/app.jar'
+
+    exposePort 8080
+    entryPoint 'java', '-XX:+UnlockExperimentalVMOptions', '-XX:+UseCGroupMemoryLimitForHeap',
+      '-Dcom.sun.management.jmxremote', '-noverify',
+      "-Djava.awt.headless=true", "-Xms128m", "-Xmx128m", '-jar', '/opt/app.jar'
+}
+
+task buildImage(type: com.bmuschko.gradle.docker.tasks.image.DockerBuildImage) {
+    dependsOn createDockerfile
+    inputDir = createDockerfile.destFile.get().asFile.parentFile
+    dockerFile = createDockerfile.destFile.get().asFile
+    def tag = "domix/mn-data-jpa:${ project.version }-jre-11-0.4".toLowerCase()
+    tags = [tag]
+    println "tag: ${ tag }"
 }
